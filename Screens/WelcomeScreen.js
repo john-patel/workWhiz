@@ -1,7 +1,14 @@
 import React from 'react'
 import { View, StyleSheet, Image, Pressable, Text } from "react-native"
 
-const WelcomeScreen = () => {
+const WelcomeScreen = ({navigation}) => {
+    const LoginScreen = () => {
+        navigation.navigate('Login')
+    }
+
+    const RegisterScreen = () => {
+        navigation.navigate('Register')
+    }
   return (
     <View style={styles.conatiner}>
         <Image style={styles.image} source={require('../Images/welcome_image.png')}/>
@@ -21,10 +28,10 @@ const WelcomeScreen = () => {
         </View>
         </View>
         <View style={styles.secondContainer}>
-            <Pressable style={styles.button} >
+            <Pressable style={styles.button} onPress={LoginScreen}>
                 <Text style={styles.btntextOne}>Sign In</Text>
             </Pressable>
-            <Pressable style={styles.button} >
+            <Pressable style={styles.button} onPress={RegisterScreen}>
                 <Text style={styles.btntexttwo}>Sign Up</Text>
             </Pressable>
         </View>
@@ -72,6 +79,7 @@ const styles = StyleSheet.create(
             marginTop: 10,
             marginBottom: 50,
             lineHeight: 20,
+            color : "black"
         },
         secondContainer: {
             display: 'flex',
@@ -82,7 +90,7 @@ const styles = StyleSheet.create(
         button: {},
         btntextOne: {
             borderRadius: 10,
-            backgroundColor: '#5AA9E6',
+            backgroundColor: '#318CE7',
             paddingTop: 10,
             paddingBottom: 10,
             paddingLeft: 40,
