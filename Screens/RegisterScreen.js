@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TextInput, Pressable } from "react-native"
+import { View, Text, StyleSheet, TextInput, Pressable, TouchableOpacity } from "react-native"
+import db  from "../Components/firebase_config"
+import { addDoc, collection, doc, setDoc } from "firebase/firestore"; 
+
+
 
 const RegisterScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -15,7 +19,14 @@ const RegisterScreen = ({navigation}) => {
       } else if (password !== confirmPassword) {
         setErrorMessage('Passwords do not match.');
       } else {
-        // Registration logic here
+        // posting data into firebase
+            addDoc(collection(db, "RegisterUsersWorkWhiz"), {
+              email: email,
+              confirmPassword: confirmPassword,
+            })
+
+        // printing values on console
+        console.log("Data is stored : ");
         console.log("User Email : " + email);      
         console.log("User Password : " + password);      
         console.log("User Confirm Password: " + confirmPassword);      
@@ -49,16 +60,16 @@ const RegisterScreen = ({navigation}) => {
             </View>
             <View style={styles.inputBoxes}>
                 <TextInput style={styles.InputBox} onChangeText={ emailTextChange } placeholder='Email' placeholderTextColor="#C0C0C0"/>
-                <TextInput style={styles.InputBox} onChangeText={ passwordTextChange } placeholder='Password' placeholderTextColor="#C0C0C0"/>
+                <TextInput style={styles.InputBox} onChangeText={ passwordTextChange } placeholder='Password' placeholderTextColor="#C0C0C0" />
                 <TextInput style={styles.InputBox} onChangeText={ consfirmPasswordTextChange } placeholder='Confirm Password' placeholderTextColor="#C0C0C0"/>
             </View>
             {errorMessage !== '' && (
                 <Text style={{ color: 'red' }}>{errorMessage}</Text>
             )}
             <View style={styles.buttonContainer} >
-                <Pressable onPress={ handleRegister }>
+                <TouchableOpacity onPress={ handleRegister }>
                     <Text style={styles.button}>Sign Up</Text>
-                </Pressable>
+                </TouchableOpacity>
             </View>
             <Pressable onPress={LoginScreen}>
                 <Text style={styles.signInbtn}>Already have an account</Text>
