@@ -72,6 +72,7 @@ const styles = StyleSheet.create(
             paddingLeft: 20,
             borderRadius: 10,
             width: "90%",
+            color: "black"
         },
         forgotPassContainer: {
             display: 'flex',

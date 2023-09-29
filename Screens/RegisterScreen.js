@@ -1,7 +1,42 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable } from "react-native"
 
 const RegisterScreen = ({navigation}) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+  
+    const handleRegister = () => {
+      if (!email || !password || !confirmPassword) {
+        setErrorMessage('All fields are required.');
+      } else if (!email.endsWith('@gmail.com')) {
+        setErrorMessage('Email must end with @gmail.com');
+      } else if (password !== confirmPassword) {
+        setErrorMessage('Passwords do not match.');
+      } else {
+        // Registration logic here
+        console.log("User Email : " + email);      
+        console.log("User Password : " + password);      
+        console.log("User Confirm Password: " + confirmPassword);      
+        setErrorMessage('');
+        // You can proceed with registration or other actions here
+      }
+    };
+  
+    const emailTextChange = (text) => {
+      setEmail(text)
+      // console.log(text); 
+    }
+    const passwordTextChange = (text) => {
+      setPassword(text)
+      // console.log(text); 
+    }
+    const consfirmPasswordTextChange = (text) => {
+      setConfirmPassword(text)
+      // console.log(text); 
+    }
+  
     const LoginScreen = () => {
         navigation.navigate("Login")
     }
@@ -13,12 +48,15 @@ const RegisterScreen = ({navigation}) => {
                 <Text style={styles.headingTwo}>Create an account so you can explore all the existing jobs</Text>
             </View>
             <View style={styles.inputBoxes}>
-                <TextInput style={styles.InputBox} placeholder='Email' placeholderTextColor="#C0C0C0"/>
-                <TextInput style={styles.InputBox} placeholder='Password' placeholderTextColor="#C0C0C0"/>
-                <TextInput style={styles.InputBox} placeholder='Confirm Password' placeholderTextColor="#C0C0C0"/>
+                <TextInput style={styles.InputBox} onChangeText={ emailTextChange } placeholder='Email' placeholderTextColor="#C0C0C0"/>
+                <TextInput style={styles.InputBox} onChangeText={ passwordTextChange } placeholder='Password' placeholderTextColor="#C0C0C0"/>
+                <TextInput style={styles.InputBox} onChangeText={ consfirmPasswordTextChange } placeholder='Confirm Password' placeholderTextColor="#C0C0C0"/>
             </View>
-            <View style={styles.buttonContainer}>
-                <Pressable>
+            {errorMessage !== '' && (
+                <Text style={{ color: 'red' }}>{errorMessage}</Text>
+            )}
+            <View style={styles.buttonContainer} >
+                <Pressable onPress={ handleRegister }>
                     <Text style={styles.button}>Sign Up</Text>
                 </Pressable>
             </View>
