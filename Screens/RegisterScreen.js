@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TextInput, Pressable, TouchableOpacity } from "react-native"
+import { View, Text, StyleSheet, TextInput, Pressable, TouchableOpacity, Button } from "react-native"
 import db  from "../Components/firebase_config"
-import { addDoc, collection, doc, setDoc } from "firebase/firestore"; 
+import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore"; 
+import Toast from 'react-native-toast-message'; // Import the toast library
 
 
 
@@ -23,15 +24,37 @@ const RegisterScreen = ({navigation}) => {
             addDoc(collection(db, "RegisterUsersWorkWhiz"), {
               email: email,
               confirmPassword: confirmPassword,
+            }).then( () => {
+                console.log("data is submitted");
+            }).catch((error) => {
+                console.log(error);
             })
+        
+        // showing toast on screen
+        Toast.show({
+            type: 'success',
+            text1: 'Success!',
+            text2: 'Your data has been submitted.',
+            visibilityTime: 3000, // 3 seconds
+            autoHide: true,
+            topOffset: 30,
+        });
+      
 
         // printing values on console
-        console.log("Data is stored : ");
+        // console.log("Data is stored : ");
         console.log("User Email : " + email);      
         console.log("User Password : " + password);      
         console.log("User Confirm Password: " + confirmPassword);      
         setErrorMessage('');
-        // You can proceed with registration or other actions here
+
+        // clearing form fields
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
+        setTimeout(() => {
+            HomeScreen()
+        }, 2500);
       }
     };
   
@@ -47,7 +70,14 @@ const RegisterScreen = ({navigation}) => {
       setConfirmPassword(text)
       // console.log(text); 
     }
-  
+
+    // Home screen navigation button
+
+    const HomeScreen = () => {
+        navigation.navigate("Home")
+    }
+
+    // Alredy have an account button
     const LoginScreen = () => {
         navigation.navigate("Login")
     }
@@ -58,10 +88,11 @@ const RegisterScreen = ({navigation}) => {
             <View style={styles.headerPara}>
                 <Text style={styles.headingTwo}>Create an account so you can explore all the existing jobs</Text>
             </View>
+            <Toast/>
             <View style={styles.inputBoxes}>
-                <TextInput style={styles.InputBox} onChangeText={ emailTextChange } placeholder='Email' placeholderTextColor="#C0C0C0"/>
-                <TextInput style={styles.InputBox} onChangeText={ passwordTextChange } placeholder='Password' placeholderTextColor="#C0C0C0" />
-                <TextInput style={styles.InputBox} onChangeText={ consfirmPasswordTextChange } placeholder='Confirm Password' placeholderTextColor="#C0C0C0"/>
+                <TextInput style={styles.InputBox} onChangeText={ emailTextChange } value={email} placeholder='Email' placeholderTextColor="#C0C0C0"/>
+                <TextInput style={styles.InputBox} onChangeText={ passwordTextChange } value={password} placeholder='Password' placeholderTextColor="#C0C0C0" secureTextEntry={true}/>
+                <TextInput style={styles.InputBox} onChangeText={ consfirmPasswordTextChange } value={confirmPassword} placeholder='Confirm Password' placeholderTextColor="#C0C0C0" secureTextEntry={true}/>
             </View>
             {errorMessage !== '' && (
                 <Text style={{ color: 'red' }}>{errorMessage}</Text>
@@ -69,7 +100,7 @@ const RegisterScreen = ({navigation}) => {
             <View style={styles.buttonContainer} >
                 <TouchableOpacity onPress={ handleRegister }>
                     <Text style={styles.button}>Sign Up</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> 
             </View>
             <Pressable onPress={LoginScreen}>
                 <Text style={styles.signInbtn}>Already have an account</Text>

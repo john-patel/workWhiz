@@ -1,7 +1,54 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Button, Text, StyleSheet, TextInput, Pressable} from "react-native"
+import db  from "../Components/firebase_config"
+import { Query, collection, doc, getDoc, getDocs, query, setDoc, where } from "firebase/firestore"; 
 
 const LoginScreen = ({navigation}) => {
+
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [errorPrompt, setErrorPrompt] = useState('')
+    const [textColor, setTextColor] = useState('')
+
+
+    // getiing data from firebase
+    const getData = () => {
+        getDocs(query(collection(db, "RegisterUsersWorkWhiz"), where('email', '==', email))).then(docsnap =>{
+            let users = []
+
+            docsnap.forEach((doc) => {
+                users.push({...doc.data(), id:doc.id})
+            })
+            console.log("Document Data : ", users[0]);
+            if (users[0]) {
+                setErrorPrompt('Succesfully LoggedIn..!')
+                setTextColor('#00FF00')
+                setTimeout(() => {
+                    HomeScreen()
+                }, 1000);
+            }
+            else {
+                setErrorPrompt('User not found..!')
+                setTextColor('#FF0000')
+            }
+        })
+    }
+
+    // setting value in useState 
+    const setEmailOnChangeText = (newText) => {
+        setEmail(newText)
+        // console.log(newText);
+    }
+
+    const setPasswordOnChangeText = (newText) => {
+        setPassword(newText)
+        // console.log(newText);
+    }
+
+    const HomeScreen = () => {
+        navigation.navigate("Home")
+    }
+
     const RegisterScreen = () => {
         navigation.navigate("Register")
     }
@@ -12,15 +59,18 @@ const LoginScreen = ({navigation}) => {
             <Text style={styles.headingTwo}>Welcome back you've {"\n"} been missed!</Text>
         </View>
         <View style={styles.formCotainer}>
-            <TextInput style={styles.InputBox} placeholder='Email' placeholderTextColor="#C0C0C0"/>
-            <TextInput style={styles.InputBox} placeholder='Password' placeholderTextColor="#C0C0C0"/>
+            <TextInput style={styles.InputBox} onChangeText={ setEmailOnChangeText } placeholder='Email' placeholderTextColor="#C0C0C0"/>
+            <TextInput style={styles.InputBox} onChangeText={ setPasswordOnChangeText } placeholder='Password' placeholderTextColor="#C0C0C0"/>
             <View style={styles.forgotPassContainer}>
                 <Pressable>
                     <Text style={styles.forgotPassword}>Forgot your password?</Text>
                 </Pressable>
             </View>
+            <View >
+                {errorPrompt !== '' && (<Text style={{ color: textColor, marginTop: 20}}>{errorPrompt}</Text>)}
+            </View>
             <View style={styles.buttonContainer}>
-                <Pressable>
+                <Pressable onPress={ getData }>
                     <Text style={styles.button}>Sign in</Text>
                 </Pressable>
             </View>
